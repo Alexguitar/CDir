@@ -308,6 +308,7 @@ main_loop:
 			continue;
 		}
 
+#if 0
 		//TODO: handle links and FIFOs correctly
 		if (tree[depth].file[current].d_type == DT_LNK
 		 || tree[depth].file[current].d_type == DT_FIFO) {
@@ -321,6 +322,7 @@ main_loop:
 			tree[depth].current++;
 			continue;
 		}
+#endif
 
 		/* handle directories */
 		if (tree[depth].file[current].d_type == DT_DIR) {
@@ -395,13 +397,12 @@ main_loop:
 			continue;
 		}
 
+		/* TODO: handle DT_UNKNOWN */
 		/* handle other files; assumed to be regular */
-		else if (tree[depth].file[current].d_type == DT_REG \
-		      || tree[depth].file[current].d_type == DT_UNKNOWN) {
+		else if (tree[depth].file[current].d_type == DT_REG) {
 
-//			ret_fd = openat(tree[depth].dir_fd, \
-//				tree[depth].file[current].d_name, O_RDONLY);
-			ret_fd = 2;
+			ret_fd = openat(tree[depth].dir_fd, \
+				tree[depth].file[current].d_name, O_RDONLY);
 			if (ret_fd == -1) {
 				errno_print();
 				return -1;
@@ -450,26 +451,4 @@ main_loop:
 	}
 
 
-}
-
-
-int main(int argc, char *argv[])
-{
-	int fd, ret_fd;
-	char name[258];
-
-	fd = open(argv[1], O_RDONLY);
-
-	if (fd == -1) {
-		errno_print();
-		return -1;
-	}
-
-	while((ret_fd = dir_get_next_filedes(fd, name)) != -1) {
-//		close(ret_fd);
-		printf("%s\n", name);
-	}
-
-	close(fd);
-	return 0;
 }
