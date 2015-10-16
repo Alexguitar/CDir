@@ -10,6 +10,9 @@
 
 FILE *get_next_file(int fd, char *filename, const char *mode)
 {
-	dir_get_next_filedes(fd, filename);
-	return fdopen(fd, mode);
+	int next_fd;
+	next_fd = dir_get_next_filedes(fd, filename);
+
+	/* next_fd is now part of the FILE, no need to care about it */
+	return fdopen(next_fd, mode);
 }
